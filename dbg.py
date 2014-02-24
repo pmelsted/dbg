@@ -39,14 +39,19 @@ def build(fn,k=31,limit=1):
 
     return d
 
+def contig_to_string(c):
+    return c[0] + ''.join(x[-1] for x in c[1:])
 
 def get_contig(d,km):
     c_fw = get_contig_forward(d,km)
+    
     c_bw = get_contig_forward(d,twin(km))
 
-    c = [twin(x) for x in c_bw[-1:0:-1]] + c_fw
-    s = c[0] + ''.join(x[-1] for x in c[1:])
-    return s,c
+    if km in fw(c_fw[-1]):
+        c = c_fw
+    else:
+        c = [twin(x) for x in c_bw[-1:0:-1]] + c_fw
+    return contig_to_string(c),c
         
 
 def get_contig_forward(d,km):
@@ -57,8 +62,10 @@ def get_contig_forward(d,km):
             break
         
         cand = [x for x in fw(c_fw[-1]) if x in d][0]
-        if cand in c_fw:
-            break
+        if cand == km or cand == twin(km):
+            break # break out of cycles or mobius contigs
+        if cand == twin(c_fw[-1]):
+            break # break out of hairpins
         
         if sum(x in d for x in bw(cand)) != 1:
             break
@@ -81,7 +88,7 @@ def all_contigs(d):
 
 def print_dbg(cs):
     for i,x in enumerate(cs):
-        print('>contig%d\n%s\n'%(i,x))
+        print '>contig%d\n%s\n'%(i,x),
 
 
 if __name__ == "__main__":
