@@ -74,7 +74,7 @@ def get_contig_forward(d,km):
 
     return c_fw
 
-def all_contigs(d):
+def all_contigs(d,k):
     done = set()
     r = []
     for x in d:
@@ -84,15 +84,47 @@ def all_contigs(d):
                 done.add(y)
                 done.add(twin(y))
             r.append(s)
-    return r
+    
+    G = {}
+    heads = {}
+    tails = {}
+    for i,x in enumerate(r):
+        G[i] = ([],[])
+        heads[x[:k]] = (i,'+')
+        tails[twin(x[-k:])] = (i,'-')
+    
+    for i in G:
+        x = r[i]
+        for y in fw(x[-k:]):
+            if y in heads:
+                G[i][0].append(heads[y])
+            if y in tails:
+                G[i][0].append(tails[y])
+        for z in fw(twin(x[:k])):
+            if z in heads:
+                G[i][1].append(heads[z])
+            if z in tails:
+                G[i][1].append(tails[z])
 
-def print_dbg(cs):
+    return G,r
+
+    
+
+def print_GFA(G,cs,k):
+    print "H  VN:Z:1.0"
     for i,x in enumerate(cs):
-        print '>contig%d\n%s\n'%(i,x),
+        print "S\t%d\t%s\t*"%(i,x)
+        
+    for i in G:
+        for j,o in G[i][0]:
+            print "L\t%d\t+\t%d\t%s\t%dM"%(i,j,o,k-1)
+        for j,o in G[i][1]:
+            print "L\t%d\t-\t%d\t%s\t%dM"%(i,j,o,k-1)
+    
 
 
 if __name__ == "__main__":
     k = int(sys.argv[1])
     d = build(sys.argv[2:],k,1)
-    cs = all_contigs(d)
-    print_dbg(cs)
+    G,cs = all_contigs(d,k)
+    print_GFA(G,cs,k)
