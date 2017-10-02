@@ -55,4 +55,4 @@ if __name__ == "__main__":
         f = open(sys.argv[1])
 
     G = parseGFA(f)
-    print dotfromGFA(G)
+    print(dotfromGFA(G))
