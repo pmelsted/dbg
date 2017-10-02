@@ -6,7 +6,7 @@ def twin(km):
     return Seq.reverse_complement(km)
 
 def kmers(seq,k):
-    for i in xrange(len(seq)-k+1):
+    for i in range(len(seq)-k+1):
         yield seq[i:i+k]
 
 def fw(km):
