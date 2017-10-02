@@ -111,19 +111,20 @@ def all_contigs(d,k):
     
 
 def print_GFA(G,cs,k):
-    print "H  VN:Z:1.0"
+    print("H  VN:Z:1.0")
     for i,x in enumerate(cs):
-        print "S\t%d\t%s\t*"%(i,x)
+        print("S\t%d\t%s\t*"%(i,x))
         
     for i in G:
         for j,o in G[i][0]:
-            print "L\t%d\t+\t%d\t%s\t%dM"%(i,j,o,k-1)
+            print("L\t%d\t+\t%d\t%s\t%dM"%(i,j,o,k-1))
         for j,o in G[i][1]:
-            print "L\t%d\t-\t%d\t%s\t%dM"%(i,j,o,k-1)
+            print("L\t%d\t-\t%d\t%s\t%dM"%(i,j,o,k-1))
     
 
 
 if __name__ == "__main__":
+    if len(sys.argv) < 2: exit("args: <k> <reads_1.fq> ...")
     k = int(sys.argv[1])
     d = build(sys.argv[2:],k,1)
     G,cs = all_contigs(d,k)
